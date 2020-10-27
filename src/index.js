@@ -7,10 +7,12 @@ const centra = require('@aero/centra');
 const fs = require('fs');
 const util = require('../lib/util');
 const chalk = require('chalk');
+const htmlToText = require('html-to-text');
 require('dotenv').config();
 const port = process.env.PORT;
 const postal_url = process.env.POSTAL_URL;
-
+const org = process.env.POSTAL_ORG;
+const server = process.env.POSTAL_SERVER;
 app.get('/', (req, res) => {
       res.status(200).send('OK!');
 });
@@ -24,13 +26,25 @@ app.post('/', jsonParser, async (req, res) => {
         }
         if (req.body.token !== postal.data.token) {
             util.auth(`Could not validate token ${req.body.token} when correct token is ${postal.data.token}`)
-            util.debug(`Email ID on postal: ${req.body.id}`)
+            util.debug(`Email ID Given: ${req.body.id}`)
+            util.debug(`Email ID on postal: ${postal.data.id}`)
             return res.status(500).send({ error: 'The token specified doesn\'t match the token stored on Postal'});
+        }
+
+        if (!req.body.plain_body) {
+            let text = htmlToText.fromString(req.body.html_body, {
+                wordwrap: false,
+                hideLinkHrefIfSameAsText: true,
+                ignoreImage: true,
+                ignoreHref: true,
+                preserveNewlines: true
+              });       
+              req.body.plain_body = text.replace(/\[+([^\][]+)]+/g, '').replace(/[^\x00-\x7F]+/g, '')
         }
         const embed = new MessageEmbed()
         .setTitle(req.body.subject)
         .setColor('#00b0f4')
-        .setDescription(req.body.plain_body)
+        .setDescription(`${req.body.plain_body}\n\n[Click here to see HTML version](${postal_url}/org/${org}/servers/${server}/messages/${postal.data.id}/html_raw)`)
         .setTimestamp()
 
         const attachments = req.body.attachments
