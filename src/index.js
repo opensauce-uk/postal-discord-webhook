@@ -39,8 +39,9 @@ app.post('/', jsonParser, async (req, res) => {
                 ignoreHref: true,
                 preserveNewlines: true
               });       
-              req.body.plain_body = text.replace(/\[+([^\][]+)]+/g, '').replace(/[^\x00-\x7F]+/g, '')
+              req.body.plain_body = text.replace(/\[+([^\][]+)]+/g, '')
         }
+        if (req.body.plain_body.length > 1918) req.body.plain_body = req.body.plain_body.slice(0, 1918)
         const embed = new MessageEmbed()
         .setTitle(req.body.subject)
         .setColor('#00b0f4')
