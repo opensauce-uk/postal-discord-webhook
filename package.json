@@ -22,6 +22,7 @@
   "homepage": "https://github.com/opensauce-uk/postal-discord-webhook#readme",
   "dependencies": {
     "@aero/centra": "^1.0.6",
+    "@atech/postal": "^1.0.0",
     "body-parser": "^1.19.0",
     "chalk": "^4.1.0",
     "discord.js": "github:discordjs/discord.js",
