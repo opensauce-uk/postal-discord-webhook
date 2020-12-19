@@ -1,1 +1,1 @@
-Small web server that will send emails sent to one of our postal emails to discord.
+Small web server that will send emails sent to one of our postal emails to discord and send emails.
